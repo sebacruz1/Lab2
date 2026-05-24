@@ -42,6 +42,23 @@ Para obtener una estimación robusta y estable de la distancia frontal, se fusio
 **1. Etapa de Predicción:** Se estimó el aumento en la señal del sensor IR asumiendo que el robot avanza frontalmente hacia un obstáculo. Se aplicó un factor de escala (`IR_SCALE = 500.0`) para convertir los metros avanzados a unidades brutas del sensor IR. Esta etapa solo se ejecuta cuando el robot avanza de frente (`FORWARD` o `ESCAPE`).
 
 $$\hat{d}_{k}^{-} = \hat{d}_{k-1} + \text{IR\_SCALE} \cdot \max(\Delta s, 0)$$
+
+$$P^{-} = P_{k-1} + Q$$
+
+*(Donde la varianza del proceso se configuró en $Q = 5.0$)*
+
+**2. Etapa de Corrección:** Se actualizó la estimación utilizando la medición real (`raw`) de los sensores frontales.
+
+$$K = \frac{P^{-}}{P^{-} + R}$$
+
+$$\hat{d}_{k} = \hat{d}_{k}^{-} + K(z_{k} - \hat{d}_{k}^{-})$$
+
+$$P = (1 - K)P^{-}$$
+
+*(Donde la varianza de la medición se configuró en $R = 200.0$, asumiendo alto ruido en los sensores infrarrojos).*
+**1. Etapa de Predicción:** Se estimó el aumento en la señal del sensor IR asumiendo que el robot avanza frontalmente hacia un obstáculo. Se aplicó un factor de escala (`IR_SCALE = 500.0`) para convertir los metros avanzados a unidades brutas del sensor IR. Esta etapa solo se ejecuta cuando el robot avanza de frente (`FORWARD` o `ESCAPE`).
+
+$$\hat{d}_{k}^{-} = \hat{d}_{k-1} + \text{IR\_SCALE} \cdot \max(\Delta s, 0)$$
 $$P^{-} = P_{k-1} + Q$$
 *(Donde la varianza del proceso se configuró en $Q = 5.0$)*
 
